@@ -8,7 +8,7 @@ namespace MyApp
 {
     internal class Program
     {
-        static Boolean debug = false;
+        static Boolean debug = true;
         static Dictionary<String, User> DataBase = new Dictionary<String, User>
         {
             {
@@ -41,11 +41,8 @@ namespace MyApp
                     // opening the connection
                     if (debug) Console.WriteLine("localhost open");
                 }
-                Console.WriteLine("Please type your command: ");
                 String line = sr.ReadLine();
-                Console.WriteLine(line);
                 int content_length = 0;
-                String info = "";
                 String[] slices = [];
                 while (line != "")
                 {
@@ -54,7 +51,6 @@ namespace MyApp
                         content_length = Int32.Parse(line.Substring(16));
                     }
                     line = sr.ReadLine();
-                    Console.WriteLine(line);
                     if (debug) Console.WriteLine($"Skipped Header Line: '{line}'");
                 }
                 if (connect == null)
@@ -64,10 +60,10 @@ namespace MyApp
                 }
                 if (connect == "POST / HTTP/1.1")
                 {
-                    //String[] Uslices = line.Split(new char[] { '&' }, 2);
-                    //String UID = slices[0].Substring(5);
-                    //String value = slices[1].Substring(9);
-                    String UID = "'cssbct'", value = "'In The Lab'";
+                    String[] Uslices = line.Split(new char[] { '&' }, 2);
+                    String UID = slices[0].Substring(5);
+                    String value = slices[1].Substring(9);
+                    //String UID = "'cssbct'", value = "'In The Lab'";
                     // The we have an update
                     if (debug) Console.WriteLine($"Received an update request for '{UID}' to '{value}'");
                     if (!DataBase.ContainsKey(UID)) DataBase.TryAdd(UID, new User { });
@@ -92,6 +88,9 @@ namespace MyApp
                     {
                         Console.WriteLine(ex.ToString());
                     }
+                    sw.Flush();
+                    sw.Close();
+                    sr.Close();
                     //conn.Close(); // close the connection
                     //Console.WriteLine("Done the job");
                 }
